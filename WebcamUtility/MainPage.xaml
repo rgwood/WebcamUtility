@@ -19,7 +19,7 @@
     <!--ThemeResource SystemControlBackgroundChromeMediumLowBrush -->
     
     <SplitView x:Name="splitView" PaneBackground="{StaticResource PaneBackgroundBrush}"
-           IsPaneOpen="True" OpenPaneLength="256" DisplayMode="Overlay">
+           IsPaneOpen="True" OpenPaneLength="256" DisplayMode="Overlay" PaneClosing="splitView_PaneClosing">
         <SplitView.Pane>
             <Grid>
                 <Grid.RowDefinitions>
@@ -27,7 +27,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock>Title</TextBlock>
+                <TextBlock Margin="10">Title</TextBlock>
 
                 <ListView 
                     Grid.Row="1"

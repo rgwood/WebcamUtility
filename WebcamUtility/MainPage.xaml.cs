@@ -40,7 +40,14 @@ namespace WebcamUtility
             Debug.WriteLine($"{devices.Count} video devices found");
         }
 
+        // The default SplitView behaviour is annoying; the pane closes as soon as the window is resized
+        // or the content is clicked. 
+        private void splitView_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+        {
+            args.Cancel = true;
+        }
 
+         
 
         // TODO: get a UI working that shows webcams
         // Next: automatically update when the list of webcams changes
