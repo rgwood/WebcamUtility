@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -22,9 +24,30 @@ namespace WebcamUtility
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        DeviceInformationCollection devices;
         public MainPage()
         {
             this.InitializeComponent();
+
+
         }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            CameraListView.ItemsSource = devices;
+            Debug.WriteLine($"{devices.Count} video devices found");
+        }
+
+
+
+        // TODO: get a UI working that shows webcams
+        // Next: automatically update when the list of webcams changes
+        // Next: animate the change 😎
+
+
+        //
+
     }
 }

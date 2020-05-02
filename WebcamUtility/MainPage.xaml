@@ -5,10 +5,44 @@
     xmlns:local="using:WebcamUtility"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:enumeration="using:Windows.Devices.Enumeration"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Page.Resources>
+        <DataTemplate x:Key="CameraListViewTemplate" x:DataType="enumeration:DeviceInformation">
+            <TextBlock Text="{x:Bind Name}" x:Phase="1" Margin="0,5,0,5"/>
+        </DataTemplate>
+        <SolidColorBrush x:Key="PaneBackgroundBrush" Opacity="0.6" Color="{ThemeResource SystemChromeMediumLowColor}">
+        </SolidColorBrush>
+    </Page.Resources>
+    <!--ThemeResource SystemControlBackgroundChromeMediumLowBrush -->
+    
+    <SplitView x:Name="splitView" PaneBackground="{StaticResource PaneBackgroundBrush}"
+           IsPaneOpen="True" OpenPaneLength="256" DisplayMode="Overlay">
+        <SplitView.Pane>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-    </Grid>
+                <TextBlock>Title</TextBlock>
+
+                <ListView 
+                    Grid.Row="1"
+            x:Name="CameraListView"
+            ItemTemplate="{StaticResource CameraListViewTemplate}"
+            BorderThickness="0"
+            BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+            HorizontalAlignment="Left"/>
+            </Grid>
+        </SplitView.Pane>
+
+        <SplitView.Content>
+            <Button HorizontalAlignment="Left">hello</Button>
+        </SplitView.Content>
+
+    </SplitView>
+
 </Page>
