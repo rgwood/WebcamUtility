@@ -203,3 +203,6 @@ dotnet_diagnostic.CA2007.severity = silent
 # CA1303: Do not pass literals as localized parameters
 # Not worth it for a hobby app
 dotnet_diagnostic.CA1303.severity = silent
+
+# CA1826: Do not use Enumerable methods on indexable collections. Instead use the collection directly
+dotnet_diagnostic.CA1826.severity = silent
