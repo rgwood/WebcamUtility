@@ -34,7 +34,7 @@
         </SplitView.Pane>
 
         <SplitView.Content>
-            <Button HorizontalAlignment="Left">hello</Button>
+            <CaptureElement Name="PreviewControl" Stretch="Uniform"/>
         </SplitView.Content>
 
     </SplitView>
