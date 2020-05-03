@@ -14,11 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
 using Windows.UI.Core;
-using Windows.UI.Xaml.Navigation;
 using Windows.Media.Capture;
 using Windows.ApplicationModel;
 using System.Threading.Tasks;
@@ -27,7 +23,7 @@ using Windows.Graphics.Display;
 
 namespace WebcamUtility
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, IDisposable
     {
         // TODO: automatically update when the list of webcams changes
         // Next: animate the change 😎
@@ -135,5 +131,9 @@ namespace WebcamUtility
             args.Cancel = true;
         }
 
+        public void Dispose()
+        {
+            mediaCapture.Dispose();
+        }
     }
 }
