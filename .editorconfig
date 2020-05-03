@@ -195,3 +195,11 @@ dotnet_naming_style.begins_with_i.required_prefix = I
 dotnet_naming_style.begins_with_i.required_suffix = 
 dotnet_naming_style.begins_with_i.word_separator = 
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
+
+# CA2007: Consider calling ConfigureAwait on the awaited task
+# Not useful in a GUI app
+dotnet_diagnostic.CA2007.severity = silent
+
+# CA1303: Do not pass literals as localized parameters
+# Not worth it for a hobby app
+dotnet_diagnostic.CA1303.severity = silent
