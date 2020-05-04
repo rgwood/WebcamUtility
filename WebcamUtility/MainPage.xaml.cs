@@ -81,7 +81,7 @@ namespace WebcamUtility
             {
                 if(mediaCapture != null && isPreviewing)
                 {
-                    await mediaCapture.StopPreviewAsync();
+                    await CleanupCameraAsync();
                 }
 
                 mediaCapture = new MediaCapture();
@@ -143,7 +143,18 @@ namespace WebcamUtility
             {
                 if (isPreviewing)
                 {
-                    await mediaCapture.StopPreviewAsync();
+                    try
+                    {
+                        await mediaCapture.StopPreviewAsync();
+                    }
+#pragma warning disable CA1031 // Do not catch general exception types
+                    catch (Exception ex)
+#pragma warning restore CA1031 // 
+                    {
+                        // Can fail when camera has been unplugged but we don't really care
+                        // Error message: "The video recording device is no longer present."
+                        Debug.WriteLine(ex);
+                    }
                     isPreviewing = false;
                 }
 
