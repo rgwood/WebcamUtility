@@ -1,24 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Devices.Enumeration;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
 using Windows.Media.Capture;
-using Windows.ApplicationModel;
 using System.Threading.Tasks;
-using Windows.System.Display;
 using Windows.Graphics.Display;
 using System.Collections.ObjectModel;
 
@@ -26,8 +13,7 @@ namespace WebcamUtility
 {
     public sealed partial class MainPage : Page, IDisposable
     {
-        // TODO: automatically update when the list of webcams changes
-        // Next: animate the change 😎
+        // TODO: Animate the change 😎
 
         ObservableCollection<DeviceInformationWrapper> devices = new ObservableCollection<DeviceInformationWrapper>();
         MediaCapture mediaCapture;
@@ -40,29 +26,15 @@ namespace WebcamUtility
             CameraListView.ItemsSource = devices;
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
             deviceWatcher = DeviceInformation.CreateWatcher(DeviceClass.VideoCapture);
             deviceWatcher.Added += DeviceWatcher_Added;
-            deviceWatcher.Updated += DeviceWatcher_Updated;
+            deviceWatcher.Updated += (a, b) => throw new NotImplementedException();
             deviceWatcher.Removed += DeviceWatcher_Removed;
             deviceWatcher.Start();
-
-           
-
-            //await StartPreviewAsync();
-        }
-
-        private void DeviceWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate args)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void DeviceWatcher_Updated(DeviceWatcher sender, DeviceInformationUpdate args)
-        {
-            throw new NotImplementedException();
         }
 
         private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
@@ -74,10 +46,25 @@ namespace WebcamUtility
             {
                 var di = new DeviceInformationWrapper(deviceInfo);
                 devices.Add(di);
-                if(devices.Count == 1)
+                if (devices.Count == 1)
                 {
                     CameraListView.SelectedItem = di;
                     await StartPreviewAsync(di.Id);
+                }
+            });
+        }
+
+        private async void DeviceWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate update)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                foreach (var device in devices)
+                {
+                    if (device.Id == update.Id)
+                    {
+                        devices.Remove(device);
+                        break;
+                    }
                 }
             });
         }
@@ -130,7 +117,6 @@ namespace WebcamUtility
             {
                 mediaCapture.CaptureDeviceExclusiveControlStatusChanged += _mediaCapture_CaptureDeviceExclusiveControlStatusChanged;
             }
-
         }
 
         private async void _mediaCapture_CaptureDeviceExclusiveControlStatusChanged(
@@ -169,16 +155,14 @@ namespace WebcamUtility
 
         }
 
+        //TODO: implement
         private void ShowMessageToUser(string message)
         {
-            //TODO: implement this
             throw new NotImplementedException(message);
         }
 
-
-
-        // The default SplitView behaviour is annoying; the pane closes as soon as the window is resized
-        // or the content is clicked. Suppress it.
+        // The default SplitView behaviour is undesirable; the pane closes as soon as
+        // the window is resized or the content is clicked. Suppress it.
         private void splitView_PaneClosing(SplitView _, SplitViewPaneClosingEventArgs args)
         {
             args.Cancel = true;
