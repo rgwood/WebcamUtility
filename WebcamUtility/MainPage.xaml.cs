@@ -20,6 +20,7 @@ using Windows.ApplicationModel;
 using System.Threading.Tasks;
 using Windows.System.Display;
 using Windows.Graphics.Display;
+using System.Collections.ObjectModel;
 
 namespace WebcamUtility
 {
@@ -28,22 +29,57 @@ namespace WebcamUtility
         // TODO: automatically update when the list of webcams changes
         // Next: animate the change 😎
 
-        DeviceInformationCollection devices;
+        ObservableCollection<DeviceInformationWrapper> devices = new ObservableCollection<DeviceInformationWrapper>();
         MediaCapture mediaCapture;
         bool isPreviewing;
+        DeviceWatcher deviceWatcher;
 
         public MainPage()
         {
             this.InitializeComponent();
+            CameraListView.ItemsSource = devices;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-            CameraListView.ItemsSource = devices;
-            Debug.WriteLine($"{devices.Count} video devices found");
-            await StartPreviewAsync();
+
+            deviceWatcher = DeviceInformation.CreateWatcher(DeviceClass.VideoCapture);
+            deviceWatcher.Added += DeviceWatcher_Added;
+            deviceWatcher.Updated += DeviceWatcher_Updated;
+            deviceWatcher.Removed += DeviceWatcher_Removed;
+            deviceWatcher.Start();
+
+           
+
+            //await StartPreviewAsync();
+        }
+
+        private void DeviceWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DeviceWatcher_Updated(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
+        {
+            // WinRT event handlers run on a worker thread so we gotta run the update
+            // on a UI thread. Not sure whether this applies to *all* WinRT events
+            // Can verify with Dispatcher.HasThreadAccess (returns false in this handler)
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                var di = new DeviceInformationWrapper(deviceInfo);
+                devices.Add(di);
+                if(devices.Count == 1)
+                {
+                    CameraListView.SelectedItem = di;
+                    await StartPreviewAsync(di.Id);
+                }
+            });
         }
 
         protected async override void OnNavigatedFrom(NavigationEventArgs e)
@@ -51,14 +87,30 @@ namespace WebcamUtility
             await CleanupCameraAsync();
         }
 
-        private async Task StartPreviewAsync()
+        private async Task StartPreviewAsync(string videoDeviceId = null)
         {
             try
             {
+                if(mediaCapture != null && isPreviewing)
+                {
+                    await mediaCapture.StopPreviewAsync();
+                }
 
                 mediaCapture = new MediaCapture();
-                await mediaCapture.InitializeAsync();
 
+                if(videoDeviceId == null)
+                {
+                    await mediaCapture.InitializeAsync();
+                }
+                else
+                {
+                    var initSettings = new MediaCaptureInitializationSettings
+                    {
+                        VideoDeviceId = videoDeviceId
+                    };
+                    await mediaCapture.InitializeAsync(initSettings);
+                }
+                
                 DisplayInformation.AutoRotationPreferences = DisplayOrientations.Landscape;
             }
             catch (UnauthorizedAccessException)
@@ -74,15 +126,16 @@ namespace WebcamUtility
                 await mediaCapture.StartPreviewAsync();
                 isPreviewing = true;
             }
-            catch (System.IO.FileLoadException)
+            catch (FileLoadException)
             {
-
                 mediaCapture.CaptureDeviceExclusiveControlStatusChanged += _mediaCapture_CaptureDeviceExclusiveControlStatusChanged;
             }
 
         }
 
-        private async void _mediaCapture_CaptureDeviceExclusiveControlStatusChanged(MediaCapture sender, MediaCaptureDeviceExclusiveControlStatusChangedEventArgs args)
+        private async void _mediaCapture_CaptureDeviceExclusiveControlStatusChanged(
+            MediaCapture sender,
+            MediaCaptureDeviceExclusiveControlStatusChangedEventArgs args)
         {
             if (args.Status == MediaCaptureDeviceExclusiveControlStatus.SharedReadOnlyAvailable)
             {

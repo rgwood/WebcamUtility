@@ -10,8 +10,10 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <DataTemplate x:Key="CameraListViewTemplate" x:DataType="enumeration:DeviceInformation">
-            <TextBlock Text="{x:Bind Name}" x:Phase="1" Margin="0,5,0,5" />
+        <DataTemplate x:Key="CameraListViewTemplate" x:DataType="local:DeviceInformationWrapper">
+            <StackPanel>
+                <TextBlock Text="{x:Bind Name}" x:Phase="1" Margin="0,5,0,5" />
+            </StackPanel>
         </DataTemplate>
         <SolidColorBrush x:Key="PaneBackgroundBrush" Opacity="0.6" Color="{ThemeResource SystemChromeMediumLowColor}"/>
     </Page.Resources>
@@ -19,18 +21,13 @@
     <SplitView x:Name="splitView" PaneBackground="{StaticResource PaneBackgroundBrush}"
            IsPaneOpen="True" OpenPaneLength="230" DisplayMode="Overlay" PaneClosing="splitView_PaneClosing">
         <SplitView.Pane>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
+            <StackPanel>
                 <TextBlock Margin="10" Style="{ThemeResource TitleTextBlockStyle}">Cameras</TextBlock>
 
-                <ListView Grid.Row="1" HorizontalContentAlignment="Stretch"
+                <ListView HorizontalContentAlignment="Stretch"
                     x:Name="CameraListView" ItemTemplate="{StaticResource CameraListViewTemplate}"
                     BorderThickness="0" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
-            </Grid>
+            </StackPanel>
         </SplitView.Pane>
 
         <SplitView.Content>
