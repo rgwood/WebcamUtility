@@ -44,7 +44,7 @@ namespace WebcamUtility
             // WinRT event handlers run on a worker thread so we gotta run the update
             // on a UI thread. Not sure whether this applies to *all* WinRT events
             // Can verify with Dispatcher.HasThreadAccess (returns false in this handler)
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 var di = new DeviceInformationWrapper(deviceInfo);
                 devices.Add(di);
@@ -186,7 +186,7 @@ namespace WebcamUtility
             mediaCapture.Dispose();
         }
 
-        private async void CameraListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void CameraListView_SelectionChanged(object _1, SelectionChangedEventArgs _2)
         {
             var selectedDevice = (DeviceInformationWrapper) CameraListView.SelectedItem;
             if (selectedDevice == null)
