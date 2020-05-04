@@ -8,6 +8,8 @@ using Windows.Media.Capture;
 using System.Threading.Tasks;
 using Windows.Graphics.Display;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 
 namespace WebcamUtility
 {
@@ -49,7 +51,6 @@ namespace WebcamUtility
                 if (devices.Count == 1)
                 {
                     CameraListView.SelectedItem = di;
-                    await StartPreviewAsync(di.Id);
                 }
             });
         }
@@ -143,6 +144,7 @@ namespace WebcamUtility
                 if (isPreviewing)
                 {
                     await mediaCapture.StopPreviewAsync();
+                    isPreviewing = false;
                 }
 
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -171,6 +173,20 @@ namespace WebcamUtility
         public void Dispose()
         {
             mediaCapture.Dispose();
+        }
+
+        private async void CameraListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedDevice = (DeviceInformationWrapper) CameraListView.SelectedItem;
+            if (selectedDevice == null)
+            {
+                await CleanupCameraAsync();
+                CameraListView.SelectedItem = devices.First();
+            }
+            else
+            {
+                await StartPreviewAsync(selectedDevice.Id);
+            }
         }
     }
 }

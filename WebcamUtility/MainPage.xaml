@@ -24,8 +24,10 @@
             <StackPanel>
                 <TextBlock Margin="10" Style="{ThemeResource TitleTextBlockStyle}">Cameras</TextBlock>
 
-                <ListView HorizontalContentAlignment="Stretch"
-                    x:Name="CameraListView" ItemTemplate="{StaticResource CameraListViewTemplate}"
+                <ListView x:Name="CameraListView" 
+                          HorizontalContentAlignment="Stretch" SelectionMode="Single"
+                          SelectionChanged="CameraListView_SelectionChanged"
+                     ItemTemplate="{StaticResource CameraListViewTemplate}"
                     BorderThickness="0" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
             </StackPanel>
         </SplitView.Pane>
