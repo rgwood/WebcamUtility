@@ -19,7 +19,7 @@
     </Page.Resources>
 
     <SplitView x:Name="splitView" PaneBackground="{StaticResource PaneBackgroundBrush}"
-           IsPaneOpen="True" OpenPaneLength="230" DisplayMode="Overlay" PaneClosing="splitView_PaneClosing">
+           IsPaneOpen="True" OpenPaneLength="200" DisplayMode="Overlay" PaneClosing="splitView_PaneClosing">
         <SplitView.Pane>
             <StackPanel>
                 <TextBlock Margin="10" Style="{ThemeResource TitleTextBlockStyle}">Cameras</TextBlock>
