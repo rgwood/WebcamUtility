@@ -10,6 +10,8 @@ using Windows.Graphics.Display;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Windows.UI.ViewManagement;
+using Windows.System;
 
 namespace WebcamUtility
 {
@@ -197,6 +199,46 @@ namespace WebcamUtility
             else
             {
                 await StartPreviewAsync(selectedDevice.Id);
+            }
+        }
+
+        private void Page_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case VirtualKey.F:
+                    ToggleFullScreen();
+                    break;
+                // We never actually get an Escape key here 🤔
+                // TODO: get this working
+                case VirtualKey.Escape:
+                    ExitFullScreen();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void ToggleFullScreen()
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if(view.IsFullScreenMode)
+            {
+                view.ExitFullScreenMode();
+            }
+            else
+            {
+                // Not clear from docs when this might fail - should I handle it?
+                view.TryEnterFullScreenMode();
+            }
+        }
+
+        private void ExitFullScreen()
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if (view.IsFullScreenMode)
+            {
+                view.ExitFullScreenMode();
             }
         }
     }

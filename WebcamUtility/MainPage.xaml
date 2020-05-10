@@ -7,19 +7,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:enumeration="using:Windows.Devices.Enumeration"
     mc:Ignorable="d"
-    Background="Black">
+    Background="Black"
+    KeyDown="Page_KeyDown">
 
     <Page.Resources>
         <DataTemplate x:Key="CameraListViewTemplate" x:DataType="local:DeviceInformationWrapper">
-            <StackPanel>
-                <TextBlock Text="{x:Bind Name}" x:Phase="1" Margin="0,5,0,5" />
-            </StackPanel>
+            <TextBlock Text="{x:Bind Name}" x:Phase="1" Margin="0,5,0,5" />
         </DataTemplate>
         <SolidColorBrush x:Key="PaneBackgroundBrush" Opacity="0.6" Color="{ThemeResource SystemChromeMediumLowColor}"/>
     </Page.Resources>
 
     <SplitView x:Name="splitView" PaneBackground="{StaticResource PaneBackgroundBrush}"
-           IsPaneOpen="True" OpenPaneLength="200" DisplayMode="Overlay" PaneClosing="splitView_PaneClosing">
+               OpenPaneLength="200"
+           IsPaneOpen="True" DisplayMode="Overlay" PaneClosing="splitView_PaneClosing">
         <SplitView.Pane>
             <StackPanel>
                 <TextBlock Margin="10" Style="{ThemeResource TitleTextBlockStyle}">Cameras</TextBlock>
@@ -28,7 +28,8 @@
                           HorizontalContentAlignment="Stretch" SelectionMode="Single"
                           SelectionChanged="CameraListView_SelectionChanged"
                      ItemTemplate="{StaticResource CameraListViewTemplate}"
-                    BorderThickness="0" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
+                    BorderThickness="0" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                </ListView>
             </StackPanel>
         </SplitView.Pane>
 
